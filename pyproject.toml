@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "geodata-mining"
+version = "0.1.0"
+description = "A small collection of scripts that is used to collect the necessary geodata for a student project to analyze the popularity of ATM locations"
+authors = ["antonzaitsev <antonzaitsev474@gmail.com>"]
+readme = "README.md"
+packages = [{include = "geodata_mining"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+dadata = "^21.10.1"
+python-dotenv = "^1.0.0"
+tqdm = "^4.66.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
