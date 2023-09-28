@@ -2,15 +2,33 @@ import argparse
 import csv
 import os
 import pathlib
-import time
 
 from dadata import Dadata
 from dotenv import load_dotenv
+from ratelimit import limits
 from tqdm import tqdm
 
+from exceptions import BaseGeodataGettingException
 
-class BaseGeodataGettingException(Exception):
-    ...
+
+@limits(calls=30, period=1)
+def _get_addresses_by_coordinates(dataset_in: list[dict]) -> list[dict]:
+    dataset_out = dataset_in[:]
+    for entry in tqdm(dataset_out):
+        if not entry["lat"] or not entry["long"]:
+            for key in field_names_to_add:
+                entry[key] = None
+            continue
+        result = dadata_client.geolocate(name="address", lat=entry["lat"],
+                                         lon=entry["long"])
+        if not result or result[0].get("data") is None:
+            for key in field_names_to_add:
+                entry[key] = None
+            continue
+        first_result = result[0]["data"]
+        for key in field_names_to_add:
+            entry[key] = first_result[key]
+    return dataset_out
 
 
 if __name__ == "__main__":
@@ -62,27 +80,10 @@ if __name__ == "__main__":
         "street_with_type",
         "street_fias_id",
     )
-    for entry in tqdm(dataset):
-        if not entry["lat"] or not entry["long"]:
-            for key in field_names_to_add:
-                entry[key] = None
-            continue
-        result = dadata_client.geolocate(name="address", lat=entry["lat"],
-                                         lon=entry["long"])
-        if not result or result[0].get("data") is None:
-            for key in field_names_to_add:
-                entry[key] = None
-            continue
-        first_result = result[0]["data"]
-        for key in field_names_to_add:
-            entry[key] = first_result[key]
-        time.sleep(0.033)  # A primitive solution to protect against
-        # exceeding the number of API calls per second (max 30 per second).
-        # Because asynchrony and multithreading are not expected for this script
-
+    dataset_out = _get_addresses_by_coordinates(dataset)
     with open(f"updated_{dataset_path.name}", "w") as csvfile:
-        field_names_to_write = tuple(dataset[0].keys())
+        field_names_to_write = tuple(dataset_out[0].keys())
         writer = csv.DictWriter(csvfile, fieldnames=field_names_to_write)
         writer.writeheader()
-        for entry in dataset:
+        for entry in dataset_out:
             writer.writerow(entry)

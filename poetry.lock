@@ -162,6 +162,17 @@ files = [
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "ratelimit"
+version = "2.2.1"
+description = "API rate limit decorator"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "ratelimit-2.2.1.tar.gz", hash = "sha256:af8a9b64b821529aca09ebaf6d8d279100d766f19e90b5059ac6a718ca6dee42"},
+]
+
+[[package]]
 name = "sniffio"
 version = "1.3.0"
 description = "Sniff out which async library your code is running under"
@@ -197,4 +208,4 @@ telegram = ["requests"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a35ae42c87e1f5684e398c54e6ebbf0c5da0ac77a6d5685375cdb83a22f9e5f4"
+content-hash = "d826f5f2527cec8d9ce2f1bfe8b8e6a03fb8e1268898afdea829bd148efc363d"

@@ -11,6 +11,7 @@ python = "^3.10"
 dadata = "^21.10.1"
 python-dotenv = "^1.0.0"
 tqdm = "^4.66.1"
+ratelimit = "^2.2.1"
 
 
 [build-system]
